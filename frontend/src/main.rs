@@ -1,3 +1,12 @@
+use yew::{Renderer, Html, function_component, html};
+
+#[function_component(App)]
+fn app() -> Html {
+    html! {
+        <h1>{ "Hello World!"}</h1>
+    }
+}
+
 fn main() {
-    println!("Hello, world!");
+    Renderer::<App>::new().render();
 }
