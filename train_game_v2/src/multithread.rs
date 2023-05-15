@@ -1,9 +1,9 @@
-use std::{thread, sync::mpsc::channel};
+use std::{thread, sync::mpsc::channel, collections::HashSet};
 use itertools::Itertools;
 
 use crate::calcs::{generate_combinations, calculate};
 
-pub fn solve(digits: String) -> Vec<String> {
+pub fn solve(digits: String) -> HashSet<String> {
     let characters: Vec<char> = vec!['+', '-', '*', '/'];
 
     let combination_length = 3;
@@ -56,13 +56,13 @@ pub fn solve(digits: String) -> Vec<String> {
         total += count;
     }
 
-    let mut solutions_vec = vec![];
+    let mut solutions_set = HashSet::new();
     while let Ok(solution) = rx_solutions.recv() {
-        solutions_vec.push(solution);
+        solutions_set.insert(solution);
     }
 
     println!("There are {total} total combinations.");
 
-    solutions_vec
+    solutions_set
 }
 

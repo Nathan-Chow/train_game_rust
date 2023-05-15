@@ -1,6 +1,8 @@
 pub mod multithread;
 pub mod calcs;
 
+use std::collections::HashSet;
+
 use crate::multithread::solve;
 
 use actix_web::{post, web::{ServiceConfig, self}, HttpResponse};
@@ -14,7 +16,7 @@ struct TrainPayload {
 
 #[derive(Serialize)]
 struct ResponseBody {
-    all_solutions: Vec<String>,
+    all_solutions: HashSet<String>,
     num_solutions: i32,
 }
 
