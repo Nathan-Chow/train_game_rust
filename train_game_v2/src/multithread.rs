@@ -23,24 +23,19 @@ pub fn solve(digits: String) -> HashSet<String> {
     let chunk_vec = digits_operators.chunks(chunk_size);
     
     let (tx_solutions, rx_solutions) = channel();
-    let (tx_count, rx_count) = channel();
 
     thread::scope(|s| {
         let mut vec_threads = vec![];
         for v in chunk_vec {
-            let tx_count = tx_count.clone();
             let tx_solutions = tx_solutions.clone();
             let join_handler = s.spawn(move || {
-                let mut count = 0;
                 for (digit, operation) in v {
                     if let Ok(valid) = calculate(digit.to_owned(), operation.to_owned()) {
                         if let Some(solution) = valid {
                             tx_solutions.send(solution).unwrap();
-                            count += 1;
                         }
                     }
                 }
-                tx_count.send(count).unwrap();
             });
             vec_threads.push(join_handler);
         }
@@ -48,20 +43,12 @@ pub fn solve(digits: String) -> HashSet<String> {
             handler.join().unwrap();
         }
     });
-    drop(tx_count);
     drop(tx_solutions);
     
-    let mut total = 0;
-    while let Ok(count) = rx_count.recv() {
-        total += count;
-    }
-
     let mut solutions_set = HashSet::new();
     while let Ok(solution) = rx_solutions.recv() {
         solutions_set.insert(solution);
     }
-
-    println!("There are {total} total combinations.");
 
     solutions_set
 }
