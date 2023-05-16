@@ -23,15 +23,7 @@ pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError> {
         Err(e) => return Err(e),
     };
 
-    let digits_operators: Vec<(Vec<i32>, Vec<Operations>)> = digit_values
-        .into_iter()
-        .permutations(4)
-        .cartesian_product(operations.into_iter())
-        .collect();
-
-    let length = digits_operators.len();
-    let chunk_size = length / 6;
-    let chunk_vec = digits_operators.chunks(chunk_size);
+    let chunk_vec = chunking_data(digit_values, operations);
 
     let (tx_solutions, rx_solutions) = channel();
 
@@ -68,4 +60,21 @@ fn string_to_digit(digit_string: String) -> Result<Vec<i32>, TrainGameError> {
         }
     }
     Ok(digit_vec)
+}
+
+fn chunking_data(digit_values: Vec<i32>, operations: Vec<Vec<Operations>>) -> Vec<Vec<(Vec<i32>, Vec<Operations>)>> {
+    let digits_operators: Vec<(Vec<i32>, Vec<Operations>)> = digit_values
+        .into_iter()
+        .permutations(4)
+        .cartesian_product(operations.into_iter())
+        .collect();
+
+    let length = digits_operators.len();
+    let chunk_size = length / 6;
+    let chunk_vec: Vec<Vec<(Vec<i32>, Vec<Operations>)>> = digits_operators.into_iter()
+        .chunks(chunk_size)
+        .into_iter()
+        .map(|chunk| chunk.collect())
+        .collect();
+    chunk_vec
 }
