@@ -40,27 +40,21 @@ pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError>{
         .collect();
 
     let length = digits_operators.len();
-
     let chunk_size = length / 6;
     let chunk_vec = digits_operators.chunks(chunk_size);
     
     let (tx_solutions, rx_solutions) = channel();
 
     thread::scope(|s| {
-        let mut vec_threads = vec![];
         for v in chunk_vec {
             let tx_solutions = tx_solutions.clone();
-            let join_handler = s.spawn(move || {
+            s.spawn(move || {
                 for (digit, operation) in v {
                     if let Ok(Some(solution)) = calculate(digit.to_owned(), operation.to_owned()) {
-                        tx_solutions.send(solution).unwrap();
+                        let _ = tx_solutions.send(solution);
                     }
                 }
             });
-            vec_threads.push(join_handler);
-        }
-        for handler in vec_threads {
-            handler.join().unwrap();
         }
     });
     drop(tx_solutions);

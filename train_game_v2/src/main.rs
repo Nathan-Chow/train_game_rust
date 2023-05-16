@@ -24,6 +24,9 @@ struct ResponseBody {
 #[post("/train_game")]
 async fn train_game(payload: web::Json<TrainPayload>) -> HttpResponse {
     let number = payload.numbers.clone();
+    if number.len() != 4 {
+        return HttpResponse::build(StatusCode::BAD_REQUEST).finish()
+    }
 
     let all_solutions = match solve(number) {
         Ok(set) => set,
@@ -35,7 +38,7 @@ async fn train_game(payload: web::Json<TrainPayload>) -> HttpResponse {
         all_solutions,
         num_solutions
     };
-    
+
     HttpResponse::Ok().json(response_body)
 }
 
