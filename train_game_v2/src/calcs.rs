@@ -29,7 +29,7 @@ pub fn calculate(digits: Vec<i32>, operators: Vec<char>) -> Result<Option<String
     let result = operate(result, num4, op3)?;
 
     if result == 10 {
-        return Ok(Some(String::from(format!("{} {} {} {} {} {} {} = 10", num1, op1, num2, op2, num3, op3, num4))));
+        return Ok(Some(format!("{} {} {} {} {} {} {} = 10", num1, op1, num2, op2, num3, op3, num4)));
     }
 
     Ok(None)

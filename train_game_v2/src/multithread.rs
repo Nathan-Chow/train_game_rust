@@ -1,18 +1,21 @@
 use std::{thread, sync::mpsc::channel, collections::HashSet};
 use itertools::Itertools;
 
-use crate::calcs::{generate_combinations, calculate};
+use crate::{calcs::{generate_combinations, calculate}, errors::TrainGameError};
 
-pub fn solve(digits: String) -> HashSet<String> {
+pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError>{
     let characters: Vec<char> = vec!['+', '-', '*', '/'];
 
     let combination_length = 3;
 
     let operations = generate_combinations(&characters, combination_length, Vec::new());
 
-    let digits_operators: Vec<(Vec<i32>, Vec<char>)> = digits
-        .chars()
-        .map(|x| x.to_digit(10).unwrap() as i32)
+    let digit_values = match string_to_digit(digit_string) {
+        Ok(digit_vec) => digit_vec,
+        Err(e) => return Err(e)
+    };
+        
+    let digits_operators: Vec<(Vec<i32>, Vec<char>)> = digit_values.into_iter()
         .permutations(4)
         .cartesian_product(operations.into_iter())
         .collect();
@@ -30,10 +33,8 @@ pub fn solve(digits: String) -> HashSet<String> {
             let tx_solutions = tx_solutions.clone();
             let join_handler = s.spawn(move || {
                 for (digit, operation) in v {
-                    if let Ok(valid) = calculate(digit.to_owned(), operation.to_owned()) {
-                        if let Some(solution) = valid {
-                            tx_solutions.send(solution).unwrap();
-                        }
+                    if let Ok(Some(solution)) = calculate(digit.to_owned(), operation.to_owned()) {
+                        tx_solutions.send(solution).unwrap();
                     }
                 }
             });
@@ -50,6 +51,19 @@ pub fn solve(digits: String) -> HashSet<String> {
         solutions_set.insert(solution);
     }
 
-    solutions_set
+    Ok(solutions_set)
 }
 
+fn string_to_digit(digit_string: String) -> Result<Vec<i32>, TrainGameError> {
+    let digit_chars = digit_string.chars();
+    let mut digit_vec = vec![];
+    for num in digit_chars {
+        if let Some(digit) = num.to_digit(10) {
+            digit_vec.push(digit as i32);
+        }
+        else {
+            return Err(TrainGameError::Invalid);
+        }
+    }
+    Ok(digit_vec)
+}

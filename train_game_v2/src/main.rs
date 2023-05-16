@@ -1,11 +1,12 @@
 pub mod multithread;
 pub mod calcs;
+pub mod errors;
 
 use std::collections::HashSet;
 
 use crate::multithread::solve;
 
-use actix_web::{post, web::{ServiceConfig, self}, HttpResponse};
+use actix_web::{post, web::{ServiceConfig, self}, HttpResponse, http::StatusCode};
 use shuttle_actix_web::ShuttleActixWeb;
 use serde::{Deserialize, Serialize};
 
@@ -24,13 +25,17 @@ struct ResponseBody {
 async fn train_game(payload: web::Json<TrainPayload>) -> HttpResponse {
     let number = payload.numbers.clone();
 
-    let all_solutions = solve(number);
+    let all_solutions = match solve(number) {
+        Ok(set) => set,
+        Err(_) => return HttpResponse::build(StatusCode::BAD_REQUEST).finish()
+    };
+
     let num_solutions = all_solutions.len() as i32;
     let response_body = ResponseBody {
         all_solutions,
         num_solutions
     };
-
+    
     HttpResponse::Ok().json(response_body)
 }
 
