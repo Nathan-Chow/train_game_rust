@@ -1,14 +1,17 @@
-use std::{thread, sync::mpsc::channel, collections::HashSet};
 use itertools::Itertools;
+use std::{collections::HashSet, sync::mpsc::channel, thread};
 
-use crate::{calcs::{generate_combinations, calculate}, errors::TrainGameError};
+use crate::{
+    calcs::{calculate, generate_combinations},
+    errors::TrainGameError,
+};
 
 #[derive(Debug, Clone, Copy)]
 pub enum Operations {
     Add,
     Sub,
     Mul,
-    Div
+    Div,
 }
 
 impl std::fmt::Display for Operations {
@@ -22,8 +25,13 @@ impl std::fmt::Display for Operations {
     }
 }
 
-pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError>{
-    let characters = vec![Operations::Add, Operations::Sub, Operations::Mul, Operations::Div];
+pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError> {
+    let characters = vec![
+        Operations::Add,
+        Operations::Sub,
+        Operations::Mul,
+        Operations::Div,
+    ];
 
     let combination_length = 3;
 
@@ -31,10 +39,11 @@ pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError>{
 
     let digit_values = match string_to_digit(digit_string) {
         Ok(digit_vec) => digit_vec,
-        Err(e) => return Err(e)
+        Err(e) => return Err(e),
     };
-        
-    let digits_operators: Vec<(Vec<i32>, Vec<Operations>)> = digit_values.into_iter()
+
+    let digits_operators: Vec<(Vec<i32>, Vec<Operations>)> = digit_values
+        .into_iter()
         .permutations(4)
         .cartesian_product(operations.into_iter())
         .collect();
@@ -42,7 +51,7 @@ pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError>{
     let length = digits_operators.len();
     let chunk_size = length / 6;
     let chunk_vec = digits_operators.chunks(chunk_size);
-    
+
     let (tx_solutions, rx_solutions) = channel();
 
     thread::scope(|s| {
@@ -58,7 +67,7 @@ pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError>{
         }
     });
     drop(tx_solutions);
-    
+
     let mut solutions_set = HashSet::new();
     while let Ok(solution) = rx_solutions.recv() {
         solutions_set.insert(solution);
@@ -73,8 +82,7 @@ fn string_to_digit(digit_string: String) -> Result<Vec<i32>, TrainGameError> {
     for num in digit_chars {
         if let Some(digit) = num.to_digit(10) {
             digit_vec.push(digit as i32);
-        }
-        else {
+        } else {
             return Err(TrainGameError::Invalid);
         }
     }

@@ -1,6 +1,10 @@
 use crate::multithread::Operations;
 
-pub fn generate_combinations(characters: &[Operations], combination_length: usize, prefix: Vec<Operations>) -> Vec<Vec<Operations>> {
+pub fn generate_combinations(
+    characters: &[Operations],
+    combination_length: usize,
+    prefix: Vec<Operations>,
+) -> Vec<Vec<Operations>> {
     if prefix.len() == combination_length {
         return vec![prefix.into_iter().collect::<Vec<Operations>>()];
     }
@@ -10,7 +14,11 @@ pub fn generate_combinations(characters: &[Operations], combination_length: usiz
     for &character in characters {
         let mut new_prefix = prefix.clone();
         new_prefix.push(character);
-        combinations.append(&mut generate_combinations(characters, combination_length, new_prefix));
+        combinations.append(&mut generate_combinations(
+            characters,
+            combination_length,
+            new_prefix,
+        ));
     }
 
     combinations
@@ -31,7 +39,10 @@ pub fn calculate(digits: Vec<i32>, operators: Vec<Operations>) -> Result<Option<
     let result = operate(result, num4, op3)?;
 
     if result == 10 {
-        return Ok(Some(format!("{} {} {} {} {} {} {} = 10", num1, op1, num2, op2, num3, op3, num4)));
+        return Ok(Some(format!(
+            "{} {} {} {} {} {} {} = 10",
+            num1, op1, num2, op2, num3, op3, num4
+        )));
     }
 
     Ok(None)
