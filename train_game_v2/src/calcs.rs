@@ -1,6 +1,8 @@
-pub fn generate_combinations(characters: &[char], combination_length: usize, prefix: Vec<char>) -> Vec<Vec<char>> {
+use crate::multithread::Operations;
+
+pub fn generate_combinations(characters: &[Operations], combination_length: usize, prefix: Vec<Operations>) -> Vec<Vec<Operations>> {
     if prefix.len() == combination_length {
-        return vec![prefix.into_iter().collect::<Vec<char>>()];
+        return vec![prefix.into_iter().collect::<Vec<Operations>>()];
     }
 
     let mut combinations = Vec::new();
@@ -14,7 +16,7 @@ pub fn generate_combinations(characters: &[char], combination_length: usize, pre
     combinations
 }
 
-pub fn calculate(digits: Vec<i32>, operators: Vec<char>) -> Result<Option<String>, ()> {
+pub fn calculate(digits: Vec<i32>, operators: Vec<Operations>) -> Result<Option<String>, ()> {
     let num1 = digits[0];
     let num2 = digits[1];
     let num3 = digits[2];
@@ -35,12 +37,11 @@ pub fn calculate(digits: Vec<i32>, operators: Vec<char>) -> Result<Option<String
     Ok(None)
 }
 
-fn operate(num1: i32, num2: i32, op: char) -> Result<i32, ()> {
+fn operate(num1: i32, num2: i32, op: Operations) -> Result<i32, ()> {
     match op {
-        '+' => Ok(num1 + num2),
-        '-' => Ok(num1 - num2),
-        '*' => Ok(num1 * num2),
-        '/' => num1.checked_div(num2).ok_or(()),
-        _ => panic!("Invalid operation"),
+        Operations::Add => Ok(num1 + num2),
+        Operations::Sub => Ok(num1 - num2),
+        Operations::Mul => Ok(num1 * num2),
+        Operations::Div => num1.checked_div(num2).ok_or(()),
     }
 }

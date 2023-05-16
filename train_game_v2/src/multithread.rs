@@ -3,8 +3,27 @@ use itertools::Itertools;
 
 use crate::{calcs::{generate_combinations, calculate}, errors::TrainGameError};
 
+#[derive(Debug, Clone, Copy)]
+pub enum Operations {
+    Add,
+    Sub,
+    Mul,
+    Div
+}
+
+impl std::fmt::Display for Operations {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Operations::Add => write!(f, "+"),
+            Operations::Sub => write!(f, "-"),
+            Operations::Mul => write!(f, "*"),
+            Operations::Div => write!(f, "/"),
+        }
+    }
+}
+
 pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError>{
-    let characters: Vec<char> = vec!['+', '-', '*', '/'];
+    let characters = vec![Operations::Add, Operations::Sub, Operations::Mul, Operations::Div];
 
     let combination_length = 3;
 
@@ -15,7 +34,7 @@ pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError>{
         Err(e) => return Err(e)
     };
         
-    let digits_operators: Vec<(Vec<i32>, Vec<char>)> = digit_values.into_iter()
+    let digits_operators: Vec<(Vec<i32>, Vec<Operations>)> = digit_values.into_iter()
         .permutations(4)
         .cartesian_product(operations.into_iter())
         .collect();
