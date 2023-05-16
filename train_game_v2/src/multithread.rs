@@ -3,27 +3,8 @@ use std::{collections::HashSet, sync::mpsc::channel, thread};
 
 use crate::{
     calcs::{calculate, generate_combinations},
-    errors::TrainGameError,
+    errors::TrainGameError, operations::Operations,
 };
-
-#[derive(Debug, Clone, Copy)]
-pub enum Operations {
-    Add,
-    Sub,
-    Mul,
-    Div,
-}
-
-impl std::fmt::Display for Operations {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Operations::Add => write!(f, "+"),
-            Operations::Sub => write!(f, "-"),
-            Operations::Mul => write!(f, "*"),
-            Operations::Div => write!(f, "/"),
-        }
-    }
-}
 
 pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError> {
     let characters = vec![

@@ -1,6 +1,7 @@
 pub mod calcs;
 pub mod errors;
 pub mod multithread;
+pub mod operations;
 
 use std::collections::HashSet;
 

@@ -1,4 +1,4 @@
-use crate::multithread::Operations;
+use crate::operations::Operations;
 
 pub fn generate_combinations(
     characters: &[Operations],
