@@ -2,10 +2,9 @@ pub mod calcs;
 pub mod errors;
 pub mod multithread;
 pub mod operations;
+pub mod reponses;
 
-use std::collections::HashSet;
-
-use crate::multithread::solve;
+use crate::{multithread::solve, reponses::{TrainPayload, ErrorBody, ResponseBody}};
 
 use actix_web::{
     http::StatusCode,
@@ -14,24 +13,7 @@ use actix_web::{
     HttpResponse,
 };
 use errors::TrainGameError;
-use serde::{Deserialize, Serialize};
 use shuttle_actix_web::ShuttleActixWeb;
-
-#[derive(Deserialize)]
-struct TrainPayload {
-    numbers: String,
-}
-
-#[derive(Serialize)]
-struct ResponseBody {
-    all_solutions: HashSet<String>,
-    num_solutions: i32,
-}
-
-#[derive(Serialize)]
-struct ErrorBody {
-    error_message: String,
-}
 
 #[post("/train_game")]
 async fn train_game(payload: web::Json<TrainPayload>) -> HttpResponse {
