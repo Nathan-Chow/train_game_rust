@@ -72,7 +72,7 @@ fn chunking_data(digit_values: Vec<i32>, operations: Vec<Vec<Operations>>) -> Ve
         .permutations(4)
         .cartesian_product(operations.into_iter())
         .collect();
-
+    
     let length = digits_operators.len();
     let chunk_size = length / 6;
     let chunk_vec: Vec<Vec<(Vec<i32>, Vec<Operations>)>> = digits_operators.into_iter()

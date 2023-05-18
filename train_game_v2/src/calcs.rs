@@ -53,6 +53,11 @@ fn operate(num1: i32, num2: i32, op: Operations) -> Result<i32, ()> {
         Operations::Add => Ok(num1 + num2),
         Operations::Sub => Ok(num1 - num2),
         Operations::Mul => Ok(num1 * num2),
-        Operations::Div => num1.checked_div(num2).ok_or(()),
+        Operations::Div => {
+            if num1 % num2 != 0 {
+                return Err(());
+            }
+            num1.checked_div(num2).ok_or(())
+        },
     }
 }

@@ -43,4 +43,13 @@ mod tests {
         let err = solutions.err().unwrap();
         assert!(err == TrainGameError::Invalid);
     }
+
+    #[test]
+    fn test_division_floats() {
+        let solutions = solve(String::from("6969"));
+        assert!(solutions.is_ok());
+        if let Ok(set) = solutions {
+            assert_eq!(set.len(), 2);
+        }
+    }
 }
