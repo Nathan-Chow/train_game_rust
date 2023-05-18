@@ -18,6 +18,8 @@ jobs:
           - stable
     steps:
       - uses: actions/checkout@v3
+      - name: downloading protoc binary
+        run: apt-get install protobuf-compiler
       - name: update rust
         run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
       - name: build project
