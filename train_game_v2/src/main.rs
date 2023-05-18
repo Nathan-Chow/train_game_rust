@@ -3,6 +3,7 @@ pub mod errors;
 pub mod multithread;
 pub mod operations;
 pub mod reponses;
+mod test;
 
 use crate::{multithread::solve, reponses::{TrainPayload, ErrorBody, ResponseBody}};
 
@@ -12,19 +13,11 @@ use actix_web::{
     web::{self, ServiceConfig},
     HttpResponse,
 };
-use errors::TrainGameError;
 use shuttle_actix_web::ShuttleActixWeb;
 
 #[post("/train_game")]
 async fn train_game(payload: web::Json<TrainPayload>) -> HttpResponse {
     let number = payload.numbers.clone();
-    if number.len() != 4 {
-        let len_error = ErrorBody {
-            error_message: TrainGameError::Size.to_string(),
-        };
-
-        return HttpResponse::build(StatusCode::BAD_REQUEST).json(len_error);
-    }
 
     let all_solutions = match solve(number) {
         Ok(set) => set,

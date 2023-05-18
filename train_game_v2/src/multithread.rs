@@ -7,7 +7,11 @@ use crate::{
 };
 
 pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError> {
-    let characters = vec![
+    if digit_string.len() != 4 {
+        return Err(TrainGameError::Length)
+    }
+
+    let operators = vec![
         Operations::Add,
         Operations::Sub,
         Operations::Mul,
@@ -16,7 +20,7 @@ pub fn solve(digit_string: String) -> Result<HashSet<String>, TrainGameError> {
 
     let combination_length = 3;
 
-    let operations = generate_combinations(&characters, combination_length, Vec::new());
+    let operations = generate_combinations(&operators, combination_length, Vec::new());
 
     let digit_values = match string_to_digit(digit_string) {
         Ok(digit_vec) => digit_vec,
