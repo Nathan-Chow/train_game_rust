@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -23,11 +25,6 @@ jobs:
 
       - name: Install protobuf
         run: sudo apt-get install protobuf-compiler
-
-      # - name: Build
-      #   run: |
-      #     cd train_game_v2
-      #     cargo build --release
 
       - name: Test
         run: |
