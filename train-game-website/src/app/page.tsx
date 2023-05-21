@@ -1,5 +1,3 @@
-"use client";
-
 import NumberForm from "./form";
 
 export default function Home() {

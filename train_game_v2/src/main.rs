@@ -7,6 +7,7 @@ mod test;
 
 use crate::{multithread::solve, reponses::{TrainPayload, ErrorBody, ResponseBody}};
 
+use actix_cors::Cors;
 use actix_web::{
     http::StatusCode,
     post,
@@ -35,13 +36,18 @@ async fn train_game(payload: web::Json<TrainPayload>) -> HttpResponse {
         num_solutions,
     };
 
-    HttpResponse::Ok().json(response_body)
+    HttpResponse::Ok().insert_header(("Access-Control-Allow-Origin", "*")).json(response_body)
 }
 
 #[shuttle_runtime::main]
 async fn actix_web() -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
+    
     let config = move |cfg: &mut ServiceConfig| {
-        cfg.service(train_game);
+        let cors = Cors::permissive();
+
+        cfg.service(web::scope("")
+            .service(train_game)
+            .wrap(cors));
     };
 
     Ok(config.into())

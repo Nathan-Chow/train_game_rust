@@ -1,3 +1,5 @@
+"use client";
+
 export default function NumberForm() {
   async function handleSubmit(event: any) {
     event.preventDefault();
@@ -5,17 +7,17 @@ export default function NumberForm() {
     const data = {
       numbers: String(event.target.numbers.value)
     }
-    // console.log(data)
-    // const response = await fetch("", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(data),
-
-    // })
+    console.log(data)
     
-    // console.log(response);
+    const response = await fetch("http://127.0.0.1:8000/train_game", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+
+    console.log(response.json())
   }
   return (
     <form onSubmit={handleSubmit}>
