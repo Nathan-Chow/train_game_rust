@@ -7,9 +7,8 @@ export default function NumberForm() {
     const data = {
       numbers: String(event.target.numbers.value)
     }
-    console.log(data)
     
-    const response = await fetch("http://127.0.0.1:8000/train_game", {
+    const response = await fetch("https://train-game-v2.shuttleapp.rs/train_game", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
