@@ -1,6 +1,19 @@
 "use client";
 
-export default function NumberForm() {
+import { Dispatch, SetStateAction } from "react";
+
+export type solObj = {
+  allSolutions: string[],
+  numSolutions: number,
+}
+
+export interface formProp {
+  setSol: Dispatch<SetStateAction<solObj>>,
+  setErr: Dispatch<SetStateAction<string>>,
+  setSub: Dispatch<SetStateAction<boolean>>,
+}
+
+export default function NumberForm(props: formProp) {
   async function handleSubmit(event: any) {
     event.preventDefault();
 
@@ -15,9 +28,22 @@ export default function NumberForm() {
       },
       body: JSON.stringify(data),
     })
-
-    console.log(response.json())
+    .then((response) => {
+      if (response.ok) {
+        return response.json()
+      }
+    })
+    .then((response) => {
+      const sols = response as solObj;
+      props.setSol(sols);
+      props.setErr("");
+      props.setSub(true);
+    })
+    .catch(err => {
+      //todo
+    });
   }
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col">
